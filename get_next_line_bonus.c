@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlivroze <tlivroze@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 20:32:31 by tlivroze          #+#    #+#             */
-/*   Updated: 2022/12/13 12:48:22 by tlivroze         ###   ########.fr       */
+/*   Updated: 2022/12/13 12:28:59 by tlivroze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <stdio.h>
+#include "get_next_line_bonus.h"
 
 char	*ft_clearstash(char *stash)
 {
@@ -97,11 +96,10 @@ char	*ft_readfd(int fd, char *stash)
 
 char	*get_next_line(int fd)
 {
-	static char		*stash;
+	static char		*stash[4096];
 	char			*line;
 
-	return (line = NULL, stash = ft_readfd(fd, stash),
-		line = ft_line(line, stash),
-		stash = ft_clearstash(stash), line);
+	return (line = NULL, stash[fd] = ft_readfd(fd, stash[fd]),
+		line = ft_line(line, stash[fd]),
+		stash[fd] = ft_clearstash(stash[fd]), line);
 }
-
