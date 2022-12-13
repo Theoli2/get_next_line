@@ -6,7 +6,7 @@
 /*   By: tlivroze <tlivroze@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 20:32:31 by tlivroze          #+#    #+#             */
-/*   Updated: 2022/12/11 04:09:14 by tlivroze         ###   ########.fr       */
+/*   Updated: 2022/12/13 03:55:34 by tlivroze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char	*ft_line(char *line, char *stash)
 		while (stash[len_stash] != '\n')
 			len_stash++;
 		line = malloc(sizeof(char) * len_stash + 2);
-		if (line == NULL)
+		if (!line)
 			return (NULL);
 		ft_strlcpy(line, stash, len_stash + 2);
 		return (line);
@@ -60,6 +60,8 @@ char	*ft_line(char *line, char *stash)
 		if (!stash || ft_strlen(stash) == 0)
 			return (NULL);
 		line = malloc(ft_strlen(stash) + 2);
+		if (!line)
+			return (NULL);
 		ft_strlcpy(line, stash, ft_strlen(stash) + 1);
 	}
 	return (line);
@@ -72,19 +74,19 @@ char	*ft_readfd(int fd, char *stash)
 
 	size = 1;
 	buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
 	while (size > 0 && !(ft_strchr(stash, '\n')))
 	{
 		size = read(fd, buffer, BUFFER_SIZE);
 		if (size == -1)
-		{
-			free(buffer);
-			free(stash);
-			return (NULL);
-		}
+			return (free(buffer), free(stash), NULL);
 		buffer[size] = '\0';
 		if (stash == NULL)
 		{
 			stash = malloc(1);
+			if (!stash)
+				return (NULL);
 			*stash = 0;
 		}
 		stash = ft_strjoin(stash, buffer);
@@ -98,9 +100,22 @@ char	*get_next_line(int fd)
 	static char		*stash;
 	char			*line;
 
-	line = NULL;
-	stash = ft_readfd(fd, stash);
-	line = ft_line(line, stash);
-	stash = ft_clearstash(stash);
-	return (line);
+	return (line = NULL, stash = ft_readfd(fd, stash),
+		line = ft_line(line, stash),
+		stash = ft_clearstash(stash), line);
 }
+
+// int	main(int ac, char **av)
+// {
+// 	int		fd;
+// 	char	*line;
+
+// 	if (ac == 2)
+// 	{
+// 		fd = open(av[1], O_RDONLY);
+// 		line = get_next_line(fd);
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	return (0);
+// }
